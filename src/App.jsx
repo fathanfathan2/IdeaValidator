@@ -9,6 +9,12 @@ import ManageView from "./views/ManageView";
 import DecisionView from "./views/DecisionView";
 import ReportView from "./views/ReportView";
 
+// Latar mint lembut (tiga cahaya radial) di belakang seluruh halaman
+const BACKDROP =
+  "radial-gradient(900px 520px at 8% -8%, rgba(45,212,191,0.22), transparent 60%), " +
+  "radial-gradient(800px 480px at 98% 4%, rgba(20,184,166,0.16), transparent 60%), " +
+  "radial-gradient(700px 500px at 60% 105%, rgba(94,234,212,0.18), transparent 60%)";
+
 export default function App() {
   const store = useIdeaStore();
   const [tab, setTab] = useState("dashboard");
@@ -31,7 +37,7 @@ export default function App() {
     window.scrollTo({ top: 0 });
   }, []);
 
-  // Klik kartu kuadran di Dashboard → buka Kelola Ide dengan filter aktif
+  // Klik kuadran di Dashboard → buka Kelola Ide dengan filter aktif
   const goManage = useCallback(
     (quadrant) => {
       setFilter(quadrant);
@@ -84,14 +90,20 @@ export default function App() {
       />
     ),
     keputusan: <DecisionView store={store} onAdd={openAdd} notify={notify} />,
-    laporan: <ReportView store={store} />,
+    laporan: <ReportView store={store} onGoTab={goTab} />,
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 print:bg-white">
+    <div className="relative min-h-screen bg-slate-50 print:bg-white">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 print:hidden"
+        style={{ background: BACKDROP }}
+      />
+
       <Navbar tab={tab} onTab={goTab} ideaCount={store.ideas.length} onAdd={openAdd} onPrint={handlePrint} />
 
-      <main className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 md:pb-12 print:max-w-none print:p-0">
+      <main className="relative mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 md:pb-12 print:max-w-none print:p-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
